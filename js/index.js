@@ -7,40 +7,30 @@ canvas.height = 768;
 ctx.fillStyle = 'white';
 ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-const placementTilesData2d = []
+const placementTilesData2d = [];
 
-for(let i = 0; i < placementTilesData.length; i += 20) {
-  placementTilesData2d.push(placementTilesData.slice(i, i + 20))
+for (let i = 0; i < placementTilesData.length; i += 20) {
+  placementTilesData2d.push(placementTilesData.slice(i, i + 20));
 }
 
-class PlacementTile {
-  constructor({position= {x: 0, y: 0}}) {
-    this.position = position
-    this.size = 64
-  }
-  draw() {
-    ctx.fillRect(this.position.x, this.position.y, this.size, this.size)
-  }
-}
+const placementTiles = [];
 
-const placementTiles = []
-
-placementTilesData2d.forEach(row => {
-  row.forEach(symbol => {
-    if(symbol === 14) {
+placementTilesData2d.forEach((row, y) => {
+  row.forEach((symbol, x) => {
+    if (symbol) {
       // add building placement tile here
-      placementTiles.push(new PlacementTile({
-        position: {
-          x: 0,
-          y: 0
-        }
-      }))
+      placementTiles.push(
+        new PlacementTile({
+          position: {
+            x: x * 64,
+            y: y * 64,
+          },
+        })
+      );
     }
-  })
-})
-
-console.log(placementTilesData2d);
-
+  });
+});
+console.log(placementTiles);
 
 const image = new Image();
 
@@ -49,47 +39,9 @@ image.onload = () => {
 };
 image.src = 'img/game-map.png';
 
-class Enemy {
-  constructor({ position = { x: 0, y: 0 } }) {
-    this.position = position;
-    (this.width = 100), (this.height = 100), (this.wayPointIndex = 0);
-    this.center = {
-      x: this.position.x + this.width / 2,
-      y: this.position.y + this.height / 2,
-    };
-  }
-  draw() {
-    ctx.fillStyle = 'red';
-    ctx.fillRect(this.position.x, this.position.y, this.width, this.height);
-  }
-
-  update() {
-    this.draw();
-
-    const wayPoint = wayPoints[this.wayPointIndex];
-    const distanceY = wayPoint.y - this.center.y;
-    const distanceX = wayPoint.x - this.center.x;
-    const angle = Math.atan2(distanceY, distanceX);
-    this.position.x += Math.cos(angle);
-    this.position.y += Math.sin(angle);
-    this.center = {
-      x: this.position.x + this.width / 2,
-      y: this.position.y + this.height / 2,
-    };
-
-    if (
-      Math.round(this.center.x) === Math.round(wayPoint.x) &&
-      Math.round(this.center.y) === Math.round(wayPoint.y) &&
-      this.wayPointIndex < wayPoints.length - 1
-    ) {
-      this.wayPointIndex++;
-    }
-  }
-}
-
 const enemies = [];
 
-for(let i = 0; i < 10; i++) {
+for (let i = 0; i < 14; i++) {
   const xOffset = i * 150;
   enemies.push(
     new Enemy({
@@ -99,10 +51,59 @@ for(let i = 0; i < 10; i++) {
   // console.log(wayPoints[0].x - xOffset);
 }
 
+const buildings = [];
+let activedTile = undefined;
+
 function animate() {
   window.requestAnimationFrame(animate);
   ctx.drawImage(image, 0, 0);
   enemies.forEach((enemy) => {
     enemy.update();
   });
+
+  placementTiles.forEach((tile) => {
+    tile.update(mouse);
+  });
+
+  buildings.forEach((building) => {
+    building.draw();
+  });
 }
+
+const mouse = {
+  x: undefined,
+  y: undefined,
+};
+
+canvas.addEventListener('click', (event) => {
+  if (activedTile && !activedTile.isOccupied) {
+    buildings.push(
+      new Building({
+        position: {
+          x: activedTile.position.x,
+          y: activedTile.position.y,
+        },
+      })
+    );
+    activedTile.isOccupied = true
+  }
+  console.log(buildings);
+});
+window.addEventListener('mousemove', (event) => {
+  mouse.x = event.clientX;
+  mouse.y = event.clientY;
+
+  activedTile = null;
+  for (let i = 0; i < placementTiles.length; i++) {
+    const tile = placementTiles[i];
+    if (
+      mouse.x > tile.position.x &&
+      mouse.x < tile.position.x + tile.size &&
+      mouse.y > tile.position.y &&
+      mouse.y < tile.position.y + tile.size
+    ) {
+      activedTile = tile;
+      break;
+    }
+  }
+});
