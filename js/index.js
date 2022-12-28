@@ -41,7 +41,7 @@ image.src = 'img/game-map.png';
 
 const enemies = [];
 
-for (let i = 0; i < 14; i++) {
+for (let i = 0; i < 10; i++) {
   const xOffset = i * 150;
   enemies.push(
     new Enemy({
@@ -67,6 +67,9 @@ function animate() {
 
   buildings.forEach((building) => {
     building.draw();
+    building.projectTiles.forEach((projectTile) => {
+      projectTile.update();
+    });
   });
 }
 
@@ -85,7 +88,7 @@ canvas.addEventListener('click', (event) => {
         },
       })
     );
-    activedTile.isOccupied = true
+    activedTile.isOccupied = true;
   }
   console.log(buildings);
 });
