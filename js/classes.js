@@ -19,7 +19,6 @@ class PlacementTile {
       mouse.y > this.position.y &&
       mouse.y < this.position.y + this.size
     ) {
-      console.log('colliding');
       this.color = 'white';
     } else {
       this.color = 'rgba(255, 255, 255, .15)';
@@ -36,6 +35,7 @@ class Enemy {
       y: this.position.y + this.height / 2,
     };
     this.radius = 50;
+    this.health = 100
   }
   draw() {
     ctx.fillStyle = 'red';
@@ -43,6 +43,12 @@ class Enemy {
     ctx.beginPath();
     ctx.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2);
     ctx.fill();
+
+    // health bar
+    ctx.fillStyle = 'red'
+    ctx.fillRect(this.position.x, this.position.y - 15, this.width, 10)
+    ctx.fillStyle = 'green'
+    ctx.fillRect(this.position.x, this.position.y - 15, this.width * this.health / 100, 10)
   }
 
   update() {
