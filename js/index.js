@@ -40,18 +40,22 @@ image.src = 'img/game-map.png';
 
 const enemies = [];
 
-for (let i = 0; i < 10; i++) {
-  const xOffset = i * 150;
-  enemies.push(
-    new Enemy({
-      position: { x: wayPoints[0].x - xOffset, y: wayPoints[0].y },
-    })
-  );
-  // console.log(wayPoints[0].x - xOffset);
+function spawnEnemies(spawnCount) {
+  for (let i = 1; i < spawnCount + 1; i++) {
+    const xOffset = i * 150;
+    enemies.push(
+      new Enemy({
+        position: { x: wayPoints[0].x - xOffset, y: wayPoints[0].y },
+      })
+    );
+    // console.log(wayPoints[0].x - xOffset);
+  }
 }
 
 const buildings = [];
 let activedTile = undefined;
+let enemyCount = 3;
+spawnEnemies(enemyCount);
 
 function animate() {
   window.requestAnimationFrame(animate);
@@ -86,6 +90,7 @@ function animate() {
       // this is when project tile hits an enemy
 
       if (distance < projectTile.enemy.radius + projectTile.radius) {
+        // enemy health and enemy removal
         projectTile.enemy.health -= 20;
 
         if (projectTile.enemy.health <= 0) {
@@ -93,6 +98,12 @@ function animate() {
             return projectTile.enemy === enemy;
           });
           if (enemyIndex > -1) enemies.splice(enemyIndex, 1);
+        }
+
+        // tracking total amount of enemy
+        if (enemies.length === 0) {
+          enemyCount += 2;
+          spawnEnemies(enemyCount);
         }
         building.projectTiles.splice(i, 1);
       }
