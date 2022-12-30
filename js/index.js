@@ -55,15 +55,35 @@ function spawnEnemies(spawnCount) {
 const buildings = [];
 let activedTile = undefined;
 let enemyCount = 3;
+let hearts= 10
 spawnEnemies(enemyCount);
 
 function animate() {
-  window.requestAnimationFrame(animate);
+  const animationId = requestAnimationFrame(animate);
   ctx.drawImage(image, 0, 0);
   for (let i = enemies.length - 1; i >= 0; i--) {
     const enemy = enemies[i];
     enemy.update();
+
+    if(enemy.position.x > canvas.width) {
+      hearts -= 1
+      console.log(hearts);
+      enemies.splice(i, 1)
+    if(hearts === 0) {
+
+      console.log("Game over")
+      cancelAnimationFrame(animationId)
+    };
+    }
   }
+
+   // tracking total amount of enemy
+   if (enemies.length === 0) {
+    enemyCount += 2;
+    spawnEnemies(enemyCount);
+  }
+
+
   placementTiles.forEach((tile) => {
     tile.update(mouse);
   });
@@ -100,11 +120,7 @@ function animate() {
           if (enemyIndex > -1) enemies.splice(enemyIndex, 1);
         }
 
-        // tracking total amount of enemy
-        if (enemies.length === 0) {
-          enemyCount += 2;
-          spawnEnemies(enemyCount);
-        }
+       
         building.projectTiles.splice(i, 1);
       }
     }

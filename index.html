@@ -12,7 +12,24 @@
     }
   </style>
   <body>
-    <canvas></canvas>
+    <div style="position: relative; display: inline-block">
+      <canvas></canvas>
+      <div
+        style="
+          position: absolute;
+          top: 0;
+          bottom: 0;
+          right: 0;
+          left: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 50px;
+        "
+      >
+        Game Over
+      </div>
+    </div>
     <script src="/js/placementTilesData.js"></script>
     <script src="/js/wayPoints.js"></script>
     <script src="/js/classes.js"></script>
