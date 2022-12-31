@@ -73,6 +73,7 @@ function animate() {
 
       console.log("Game over")
       cancelAnimationFrame(animationId)
+      document.querySelector('#game-over').style.display = 'flex'
     };
     }
   }
