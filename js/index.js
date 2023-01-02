@@ -55,7 +55,7 @@ function spawnEnemies(spawnCount) {
 const buildings = [];
 let activedTile = undefined;
 let enemyCount = 3;
-let hearts= 10
+let hearts = 10;
 spawnEnemies(enemyCount);
 
 function animate() {
@@ -65,25 +65,22 @@ function animate() {
     const enemy = enemies[i];
     enemy.update();
 
-    if(enemy.position.x > canvas.width) {
-      hearts -= 1
-      console.log(hearts);
-      enemies.splice(i, 1)
-    if(hearts === 0) {
-
-      console.log("Game over")
-      cancelAnimationFrame(animationId)
-      document.querySelector('#game-over').style.display = 'flex'
-    };
+    if (enemy.position.x > canvas.width) {
+      hearts -= 1;
+      enemies.splice(i, 1);
+      document.querySelector('#hearts').innerHTML = hearts
+      if (hearts === 0) {
+        cancelAnimationFrame(animationId);
+        document.querySelector('#game-over').style.display = 'flex';
+      }
     }
   }
 
-   // tracking total amount of enemy
-   if (enemies.length === 0) {
+  // tracking total amount of enemy
+  if (enemies.length === 0) {
     enemyCount += 2;
     spawnEnemies(enemyCount);
   }
-
 
   placementTiles.forEach((tile) => {
     tile.update(mouse);
@@ -121,7 +118,6 @@ function animate() {
           if (enemyIndex > -1) enemies.splice(enemyIndex, 1);
         }
 
-       
         building.projectTiles.splice(i, 1);
       }
     }
